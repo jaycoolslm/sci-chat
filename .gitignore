@@ -1,0 +1,10 @@
+.streamlit
+.vscode
+corpus
+doaj
+etc
+include
+lib
+share
+usercookies
+vectordb
