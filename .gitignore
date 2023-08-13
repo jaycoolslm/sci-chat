@@ -9,4 +9,4 @@ share
 usercookies
 vectordb
 .env
-
+__pycache__
