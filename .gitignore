@@ -8,3 +8,5 @@ include
 share
 usercookies
 vectordb
+.env
+

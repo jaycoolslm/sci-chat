@@ -7,3 +7,7 @@ openai
 chromadb
 nltk
 sentence_transformers
+streamlit_option_menu
+jq
+dotenv
+lark

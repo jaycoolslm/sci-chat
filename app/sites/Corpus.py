@@ -1,14 +1,12 @@
 import streamlit as st
-from lib.scrape import ScienceDirect
+from lib.scrape.doaj import ScrapeDoaj
 import os
 from .ChatBot import chatbot
 
 def corpus():
 
     if "sd" not in st.session_state:
-        st.session_state.sd = ScienceDirect(
-            api_key="cb941e863e2c5dcdd18ef5d262f8c9bd",
-        )
+        st.session_state.sd = ScrapeDoaj()
 
     if "num_displayed" not in st.session_state:
         st.session_state.num_displayed = 5  # Initialize the number of displayed papers
@@ -24,7 +22,7 @@ def corpus():
             This app is chatbot for your research papers
             """
         )
-        st.write("Made with ❤️  by Jay Cool")
+        st.write("Made with ❤️ by Jay Cool")
 
     # Function for the first page
     st.header("Research Query")
@@ -46,14 +44,13 @@ def corpus():
         print("Papers to display: ", st.session_state.num_displayed)
         for i in range(st.session_state.num_displayed):
             paper = st.session_state.papers[i]
-            st.write("---")
-            st.markdown(create_card(paper["authors"], paper["publicationDate"], paper["title"], paper["uri"]), unsafe_allow_html=True)
+            st.markdown(create_card(paper["bibjson"]["author"], paper["bibjson"]["year"], paper["bibjson"]["title"], paper["bibjson"]["link"][0]["url"]), unsafe_allow_html=True)
 
     if st.button("Enter", disabled=False if query else True) or query:
         st.session_state.num_displayed = 5
         st.session_state.papers = []
         with st.spinner('Wait for it...'):
-            st.session_state.papers, papers_amount = st.session_state.sd.scrape_query_results(query, override_max_offset=offset - 100)
+            st.session_state.papers, papers_amount = st.session_state.sd.scrape(query)
         st.success(f'{papers_amount} papers collected!')
         
     if len(st.session_state.papers):

@@ -3,8 +3,7 @@ import time
 import os
 from bs4 import BeautifulSoup
 
-
-class ScrapeScienceDirect:
+class ScienceDirect:
     url = "https://api.elsevier.com/content"
     show = 100
 
@@ -25,9 +24,7 @@ class ScrapeScienceDirect:
             [piis_res, papers] = self._request_with_retries(self._search_request, query, offset)
             self.piis.extend(piis_res)
             offset += self.show
-        print("Amount of articles scraped: ", len(self.piis))
-        print("Top five papers: ", papers[:5])
-        return papers
+        return papers, len(self.piis)
 
     def scrape_articles(self):
         if not len(self.piis):

@@ -1,9 +1,6 @@
 import streamlit as st
-from streamlit_chat import message
-from streamlit_extras.colored_header import colored_header
-from streamlit_extras.add_vertical_space import add_vertical_space
 from lib.chat_with_data import ChatWithData, VectorDBParams, ChatParams
-import random, json
+import random, json, os
 from langchain.document_loaders import DirectoryLoader, TextLoader, JSONLoader
 from langchain.text_splitter import SpacyTextSplitter, NLTKTextSplitter
 from langchain.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
@@ -14,25 +11,20 @@ from langchain.chains import LLMChain
 from langchain.chains.conversational_retrieval.prompts import CONDENSE_QUESTION_PROMPT
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chains.query_constructor.base import AttributeInfo
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def metadata_func(record: dict, metadata: dict) -> dict:
     metadata["journal"] = record["journal"]["title"]
     metadata["publisher"] = record["journal"]["publisher"]
     if "keywords" in record:
         metadata["keywords"] = "; ".join(record["keywords"])
-    metadata["year"] = int(record["year"])
+    metadata["year"] = int(record["year"]) or None
     metadata["author"] = "; ".join([author["name"] for author in record["author"]])
-
     metadata["url"] = record["link"][0]["url"]
     metadata["title"] = record["title"]
     return metadata
-
-loader = JSONLoader(
-    file_path="doaj/a.json",
-    jq_schema=".[].bibjson",
-    content_key="abstract",
-    metadata_func=metadata_func,
-)
 
 metadata_field_info = [
     AttributeInfo(
@@ -73,13 +65,13 @@ metadata_field_info = [
     ),
 ]
 
-api_key = ""
+api_key = os.getenv("OPENAI_API_KEY")
 
 
 llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, openai_api_key=api_key)
 
-def chatbot():
 
+def chatbot():
     if "vector_db_kwargs" not in st.session_state:
         st.session_state.vector_db_kwargs = {
             # which documents to load

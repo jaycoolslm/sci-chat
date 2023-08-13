@@ -40,8 +40,27 @@ class ScrapeDoaj:
             #     xx
             # else: pass
         # count = 0
+        filtered_articles = [
+            record for record in articles
+            if all(
+                key in record["bibjson"] for key in [
+                    "journal", 
+                    "year", 
+                    "author", 
+                    "link", 
+                    "title"
+                ]
+            ) 
+            and "title" in record["bibjson"]["journal"] 
+            and "publisher" in record["bibjson"]["journal"] 
+            and "url" in record["bibjson"]["link"][0]
+        ]
         with open(os.path.join(self.corpus_dir, f"{filename}.json"), 'w') as json_file:
-                json.dump(articles, json_file, indent=2)
+                json.dump(filtered_articles, json_file, indent=2)
+
+        return filtered_articles, len(filtered_articles)
+
+        
 
 
     def _get_max_offset(self, query):
