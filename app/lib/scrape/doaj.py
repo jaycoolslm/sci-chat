@@ -1,4 +1,5 @@
 import os, re, time, json, requests, shutil
+import os, re, time, json, requests, shutil
 from bs4 import BeautifulSoup
 
 class ScrapeDoaj:
@@ -55,6 +56,8 @@ class ScrapeDoaj:
             and "title" in record["bibjson"]["journal"] 
             and "publisher" in record["bibjson"]["journal"]
             and record["bibjson"]["link"] 
+            and "publisher" in record["bibjson"]["journal"]
+            and record["bibjson"]["link"] 
             and "url" in record["bibjson"]["link"][0]
         ]
         try:
@@ -63,8 +66,20 @@ class ScrapeDoaj:
         except Exception as e:
             print(f"Error deleting file {self.corpus_dir}/{filename}. Reason: {e}")
 
+        try:
+            os.remove(f"{self.corpus_dir}/{filename}.json")
+            print(f"File {self.corpus_dir}/{filename} has been deleted successfully!")
+        except Exception as e:
+            print(f"Error deleting file {self.corpus_dir}/{filename}. Reason: {e}")
+
         with open(os.path.join(self.corpus_dir, f"{filename}.json"), 'w') as json_file:
                 json.dump(filtered_articles, json_file, indent=2)
+
+        # delete old vector db so chat will be reinitialized
+        try:
+            shutil.rmtree("./vectordb/metadata")
+        except Exception as e:
+            print(f"Error occurred while deleting vector db: {str(e)}")
 
         # delete old vector db so chat will be reinitialized
         try:
