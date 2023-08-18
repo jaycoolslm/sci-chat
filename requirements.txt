@@ -9,5 +9,7 @@ nltk
 sentence_transformers
 streamlit_option_menu
 jq
-dotenv
+python-dotenv
 lark
+pandas
+beautifulsoup4

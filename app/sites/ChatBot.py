@@ -20,7 +20,7 @@ def metadata_func(record: dict, metadata: dict) -> dict:
     metadata["publisher"] = record["journal"]["publisher"]
     if "keywords" in record:
         metadata["keywords"] = "; ".join(record["keywords"])
-    metadata["year"] = int(record["year"]) or None
+    metadata["year"] = int(record["year"]) if isinstance(record["year"], int) else 0
     metadata["author"] = "; ".join([author["name"] for author in record["author"]])
     metadata["url"] = record["link"][0]["url"]
     metadata["title"] = record["title"]
