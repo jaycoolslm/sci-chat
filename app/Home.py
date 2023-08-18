@@ -16,7 +16,7 @@ if "active_page" not in st.session_state:
 # 1. as sidebar menu
 with st.sidebar:
     st.session_state.active_page = option_menu("SciChat", ["Corpus", 'ChatBot', 'Analytics'], 
-        icons=['archive', 'chat-left-text', 'bar-chart'], menu_icon="infinity", default_index=1)
+        icons=['archive', 'chat-left-text', 'bar-chart'], menu_icon="infinity", default_index=0)
 
         
 
